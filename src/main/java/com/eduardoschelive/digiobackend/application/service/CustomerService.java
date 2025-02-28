@@ -1,5 +1,7 @@
 package com.eduardoschelive.digiobackend.application.service;
 
+import com.eduardoschelive.digiobackend.application.exception.CustomerNotFoundException;
+import com.eduardoschelive.digiobackend.application.exception.NoPurchasesFoundForCustomerException;
 import com.eduardoschelive.digiobackend.application.port.outbound.CustomerRepositoryPort;
 import com.eduardoschelive.digiobackend.application.port.outbound.ProductRepositoryPort;
 import com.eduardoschelive.digiobackend.application.usecases.CustomerUseCases;
@@ -40,27 +42,29 @@ public class CustomerService implements CustomerUseCases {
     }
 
     @Override
-    public Product getRecommendationByCustomer(String customerDocument) {
+    public Product getRecommendationByCustomer(String customerDocument) throws CustomerNotFoundException, NoPurchasesFoundForCustomerException {
         var customer = customerRepositoryPort.getCustomerByDocument(customerDocument)
-                .orElseThrow(() -> new IllegalArgumentException("Customer not found"));
+                .orElseThrow(() -> new CustomerNotFoundException(customerDocument));
 
         var mostPurchasedProductType = customer.getPurchases().stream()
                 .collect(Collectors.groupingBy(p -> p.getProduct().getType(), Collectors.summingInt(Purchase::getAmount)))
                 .entrySet().stream()
                 .max(Map.Entry.comparingByValue())
                 .map(Map.Entry::getKey)
-                .orElseThrow(() -> new IllegalArgumentException("No purchases found"));
+                .orElseThrow(() -> new NoPurchasesFoundForCustomerException(customerDocument));
 
-        return customer.getPurchases().stream()
+        var productId = customer.getPurchases().stream()
                 .filter(p -> p.getProduct().getType().equals(mostPurchasedProductType))
                 .collect(Collectors.groupingBy(p -> p.getProduct().getId(), Collectors.summingInt(Purchase::getAmount)))
                 .entrySet().stream()
                 .max(Map.Entry.comparingByValue())
-                .map(e -> productRepositoryPort.getProducts().stream()
-                        .filter(p -> p.getId().equals(e.getKey()))
-                        .findFirst()
-                        .orElseThrow())
-                .orElseThrow(() -> new IllegalArgumentException("No purchases found"));
+                .map(Map.Entry::getKey)
+                .orElseThrow(() -> new NoPurchasesFoundForCustomerException(customerDocument));
+
+        return productRepositoryPort.getProducts().stream()
+                .filter(p -> p.getId().equals(productId))
+                .findFirst()
+                .orElseThrow(() -> new NoPurchasesFoundForCustomerException(customerDocument));
     }
 
     private int getPercentile(Collection<Customer> customers) {

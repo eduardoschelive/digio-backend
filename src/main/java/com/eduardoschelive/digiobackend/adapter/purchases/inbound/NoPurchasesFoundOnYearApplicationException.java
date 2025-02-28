@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 public class NoPurchasesFoundOnYearApplicationException extends ApplicationException {
 
     public NoPurchasesFoundOnYearApplicationException(Integer year) {
-        super("No purchases found on year " + year);
+        super("Não foram encontradas compras no ano de " + year);
     }
 
     @Override

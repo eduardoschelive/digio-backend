@@ -1,6 +1,8 @@
 package com.eduardoschelive.digiobackend.adapter.customer.inbound;
 
 import com.eduardoschelive.digiobackend.adapter.product.inbout.ProductDTO;
+import com.eduardoschelive.digiobackend.application.exception.CustomerNotFoundException;
+import com.eduardoschelive.digiobackend.application.exception.NoPurchasesFoundForCustomerException;
 import com.eduardoschelive.digiobackend.application.port.inbound.CustomerEndpointPort;
 import com.eduardoschelive.digiobackend.application.usecases.CustomerUseCases;
 import com.eduardoschelive.digiobackend.infrastructure.annotations.Adapter;
@@ -26,7 +28,13 @@ public class CustomerEndpointAdapter implements CustomerEndpointPort {
     }
 
     @Override
-    public ProductDTO getRecommendationByCustomer(String customerDocument) {
-        return ProductDTO.fromProduct(customerUseCases.getRecommendationByCustomer(customerDocument));
+    public ProductDTO getRecommendationByCustomer(String customerDocument)  {
+        try {
+            return ProductDTO.fromProduct(customerUseCases.getRecommendationByCustomer(customerDocument));
+        } catch (CustomerNotFoundException exception) {
+            throw new CustomerNotFoundApplicationException(exception.getDocument());
+        } catch (NoPurchasesFoundForCustomerException exception) {
+            throw new NoPurchasesFoundForCustomerApplicationException(exception.getDocument());
+        }
     }
 }
