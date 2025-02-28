@@ -24,7 +24,6 @@ public class PurchaseRepositoryAdapter implements PurchaseRepositoryPort {
     private final DigioClient digioClient;
     private final DigioApiConfig digioApiConfig;
     private final ProductRepositoryPort productRepositoryPort;
-    private final CustomerRepositoryPort customerRepositoryPort;
 
     private List<CustomerResponse> fetchClientResponses() {
         var clientsResponse = digioClient.getRestClient()
