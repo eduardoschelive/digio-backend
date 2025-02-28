@@ -22,7 +22,11 @@ public class PurchaseEndpointAdapter implements PurchaseEndpointPort {
     }
 
     @Override
-    public PurchaseDTO getHighestPurchasesByYear(Integer year) throws NoPurchasesFoundOnYear {
-        return PurchaseDTO.fromPurchase(purchaseUseCases.getHighestPurchasesByYear(year));
+    public PurchaseDTO getHighestPurchasesByYear(Integer year) {
+        try {
+            return PurchaseDTO.fromPurchase(purchaseUseCases.getHighestPurchasesByYear(year));
+        } catch (NoPurchasesFoundOnYear exception) {
+            throw new NoPurchasesFoundOnYearApplicationException(exception.getYear());
+        }
     }
 }

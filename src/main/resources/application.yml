@@ -12,3 +12,20 @@ digio:
 customer:
   top:
     percentile: 75
+resilience4j:
+  circuitbreaker:
+    instances:
+      customers-circuit-breaker:
+        sliding-window-size: 8
+        minimum-number-of-calls: 4
+      purchases-circuit-breaker:
+        sliding-window-size: 8
+        minimum-number-of-calls: 4
+      products-circuit-breaker:
+        sliding-window-size: 8
+        minimum-number-of-calls: 4
+  retry:
+    instances:
+      purchases-retry:
+        max-attempts: 3
+        wait-duration: 500

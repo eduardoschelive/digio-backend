@@ -1,6 +1,5 @@
 package com.eduardoschelive.digiobackend.adapter.purchases.inbound;
 
-import com.eduardoschelive.digiobackend.application.exception.NoPurchasesFoundOnYear;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,13 +24,8 @@ public class PurchasesController {
 
     @GetMapping("/maior-compra/{year}")
     public ResponseEntity<PurchaseDTO> getHighestPurchasesByYear(@PathVariable Integer year) {
-        try {
-            var highestPurchase = purchaseEndpointAdapter.getHighestPurchasesByYear(year);
-            return ResponseEntity.ok(highestPurchase);
-        } catch (NoPurchasesFoundOnYear e) {
-            // TODO: use controller advice to handle this exception
-            return ResponseEntity.notFound().build();
-        }
+        var highestPurchase = purchaseEndpointAdapter.getHighestPurchasesByYear(year);
+        return ResponseEntity.ok(highestPurchase);
     }
 
 }
