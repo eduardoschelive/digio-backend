@@ -1,0 +1,14 @@
+spring:
+  application:
+    name:  digio-backend
+
+digio:
+  api:
+    base-url: https://rgr3viiqdl8sikgv.public.blob.vercel-storage.com/
+    endpoints:
+      customer: clientes-Vz1U6aR3GTsjb3W8BRJhcNKmA81pVh.json
+      products: produtos-mnboX5IPl6VgG390FECTKqHsD9SkLS.json
+
+customer:
+  top:
+    percentile: 75
